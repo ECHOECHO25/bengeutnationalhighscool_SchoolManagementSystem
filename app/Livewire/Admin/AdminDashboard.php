@@ -1,16 +1,41 @@
 <?php
+
 namespace App\Livewire\Admin;
 
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\StudentInformation;
+use App\Models\SchoolYear;   // ✅ Add this
 use Livewire\Component;
 
 class AdminDashboard extends Component
 {
     public function render()
     {
-        $gradeLevelCounts = Student::selectRaw('grade_level_id, COUNT(*) as total')
+        /** ============================
+         *  GET ACTIVE SCHOOL YEAR
+         ============================ */
+        $activeSchoolYear = SchoolYear::where('is_active', 1)->first();
+
+        if (!$activeSchoolYear) {
+            // Prevent errors if no active SY exists
+            return view('livewire.admin.admin-dashboard', [
+                'gradeLevelCounts' => collect([]),
+                'studentCount' => 0,
+                'teacherCount' => Teacher::count(),
+                'maleStudents' => 0,
+                'femaleStudents' => 0,
+            ]);
+        }
+
+        $schoolYearId = $activeSchoolYear->id;
+
+
+        /** ============================
+         *  STUDENTS PER GRADE LEVEL
+         ============================ */
+        $gradeLevelCounts = Student::where('school_year_id', $schoolYearId)
+            ->selectRaw('grade_level_id, COUNT(*) as total')
             ->groupBy('grade_level_id')
             ->with('gradeLevel')
             ->get()
@@ -21,8 +46,19 @@ class AdminDashboard extends Component
                 ];
             });
 
-        // Get gender counts from StudentInformation table (since that's where sex is stored)
-        $enrolledLRNs = Student::pluck('lrn')->toArray();
+
+        /** ============================
+         *  TOTAL STUDENTS
+         ============================ */
+        $students = Student::where('school_year_id', $schoolYearId)->get();
+
+        $studentCount = $students->count();
+
+
+        /** ============================
+         *  GENDER COUNTS
+         ============================ */
+        $enrolledLRNs = $students->pluck('lrn')->toArray();
 
         $maleStudents = StudentInformation::whereIn('lrn', $enrolledLRNs)
             ->where('sex', 'Male')
@@ -32,23 +68,22 @@ class AdminDashboard extends Component
             ->where('sex', 'Female')
             ->count();
 
-        // Teacher gender counts (if sex column exists in teachers table)
-        try {
-            $maleTeachers = Teacher::where('sex', 'Male')->count();
-            $femaleTeachers = Teacher::where('sex', 'Female')->count();
-        } catch (\Exception $e) {
-            // If sex column doesn't exist in teachers table
-            $maleTeachers = 0;
-            $femaleTeachers = 0;
-        }
 
+        /** ============================
+         * TEACHER COUNT
+         ============================ */
+        $teacherCount = Teacher::count();
+
+
+        /** ============================
+         *  VIEW DATA
+         ============================ */
         return view('livewire.admin.admin-dashboard', [
             'gradeLevelCounts' => $gradeLevelCounts,
-            'studentCount' => Student::count(),
-            'teacherCount' => Teacher::count(),
-            'maleStudents' => $maleStudents,
-            'femaleStudents' => $femaleStudents,
-
+            'studentCount'     => $studentCount,
+            'teacherCount'     => $teacherCount,
+            'maleStudents'     => $maleStudents,
+            'femaleStudents'   => $femaleStudents,
         ]);
     }
 }

@@ -1,61 +1,33 @@
 <?php
 
-use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
 new #[Layout('layouts.guest')] class extends Component
 {
-    public string $email = '';
+    //
+};
+?>
 
-    /**
-     * Send a password reset link to the provided email address.
-     */
-    public function sendPasswordResetLink(): void
-    {
-        $this->validate([
-            'email' => ['required', 'string', 'email'],
-        ]);
-
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $this->only('email')
-        );
-
-        if ($status != Password::RESET_LINK_SENT) {
-            $this->addError('email', __($status));
-
-            return;
-        }
-
-        $this->reset('email');
-
-        session()->flash('status', __($status));
-    }
-}; ?>
-
-<div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+<div class="max-w-md mx-auto text-center">
+    <div class="mb-4 text-sm text-white-600">
+        {{ __('Online password reset is disabled for all accounts.') }}
     </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="p-5 border border-gray-200 rounded-lg bg-gray-50">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">
+            Contact Your Administrator
+        </h2>
 
-    <form wire:submit="sendPasswordResetLink">
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <p class="text-gray-700 text-sm">
+            To reset your password, please visit or contact your school administrator.
+            Your account password will be reset manually for security verification.
+        </p>
+    </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
+    <div class="mt-4">
+        <a href="{{ route('login') }}" class="text-sm text-blue-600 hover:underline">
+            ← Back to Login
+        </a>
+    </div>
 </div>
