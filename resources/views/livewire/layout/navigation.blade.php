@@ -284,8 +284,8 @@ new class extends Component {
                             <span class="ml-3">Students</span>
                         </a>
                     </li>
-                    {{-- <li>
-                        <a href="{{ route('admin.dashboard') }}"
+                    <li>
+                        <a href="{{ route('admin.reset-passwords') }}"
                             class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-gray-700' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -299,9 +299,9 @@ new class extends Component {
                                 <path d="M7 14h.01" />
                                 <path d="M17 18h.01" />
                             </svg>
-                            <span class="ml-3">Attendances</span>
+                            <span class="ml-3">Reset Passwords</span>
                         </a>
-                    </li> --}}
+                    </li>
                 </ul>
             @break
 

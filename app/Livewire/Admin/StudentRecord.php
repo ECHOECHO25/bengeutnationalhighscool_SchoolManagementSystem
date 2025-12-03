@@ -53,6 +53,10 @@ class StudentRecord extends Component implements HasForms, HasTable
                 ->label('Filter'),
 
         )
+         ->actions([
+                    Action::make('edit')->label('Edit')->button()->color('warning')->icon('heroicon-s-pencil')->iconPosition('after')->size('sm')
+                    ->url(fn($record) => route('admin.edit-student-data', encrypt($record->id))),
+            ])
 
             ->bulkActions([
                 // ...

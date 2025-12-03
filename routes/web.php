@@ -13,6 +13,7 @@ use App\Livewire\Admin\Report;
 use App\Livewire\Admin\SchoolYearRecord;
 use App\Livewire\Admin\StudentRecord;
 use App\Livewire\Admin\TeacherRecord;
+use App\Livewire\Admin\ResetUserPasswords;
 
 use App\Livewire\Enrollment;
 use App\Livewire\Guidance\GuidanceDashboard;
@@ -69,7 +70,10 @@ Route::prefix('administrator')
         Route::get('/audit_logs', AuditRecord::class)->name('admin.audit');
         Route::get('/backup-restore', BackupRestore::class)->name('admin.backup-restore');
         Route::get('/reports', Report::class)->name('admin.reports');
-    });
+        Route::get('/reset-passwords', ResetUserPasswords::class)->name('admin.reset-passwords');
+});
+
+
 
 
 /*
